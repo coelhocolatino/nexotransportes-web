@@ -158,7 +158,7 @@
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function grados(n) { return (Math.round(n * 10) / 10).toLocaleString('es-ES') + ' °C'; }
 
-  // Portada: foto de día o de noche y rótulo de la primera escena
+  // Portada (siempre Vigo, es la ría): foto de día o de noche y rótulo de la primera escena
   function aplicarCielo(t) {
     var noche = esDeNoche();
     var tipo = t && t.lluvia10min > 0 ? 'lluvia' : (t ? tipoCielo(t.ceo) : '');
@@ -173,27 +173,48 @@
     if (actual === 0) railNombre.textContent = NOMBRES[0];
     window.NEXO_AHORA = { noche: noche, tipo: tipo };
     window.dispatchEvent(new CustomEvent('nexo:ahora', { detail: window.NEXO_AHORA }));
-    if (t && t.temp != null) {
-      var chip = document.getElementById('ahoraChip');
-      chip.innerHTML = icono(tipo, noche) + '<b>' + grados(t.temp) + '</b><span class="chip-txt">Vigo · ' + esc(TXT_CIELO[tipo] || (noche ? 'Noche' : 'Ahora')) + '</span>';
-      chip.title = grados(t.temp) + ' en Vigo · ' + (TXT_CIELO[tipo] || '') + ' · ver Vigo en directo';
-      chip.hidden = false;
-    }
   }
   aplicarCielo(null);
 
-  // Sección «Vigo, ahora»
+  // Temperatura de la cabecera: la de la ciudad elegida en «En directo»
+  function ponerChip(a) {
+    var t = a && a.tiempo, chip = document.getElementById('ahoraChip');
+    if (!t || t.temp == null) return;
+    var noche = esDeNoche(), tipo = t.lluvia10min > 0 ? 'lluvia' : tipoCielo(t.ceo);
+    chip.innerHTML = icono(tipo, noche) + '<b>' + grados(t.temp) + '</b><span class="chip-txt">' + esc(a.nombre || 'Vigo') + ' · ' + esc(TXT_CIELO[tipo] || (noche ? 'Noche' : 'Ahora')) + '</span>';
+    chip.title = grados(t.temp) + ' en ' + (a.nombre || 'Vigo') + ' · ' + (TXT_CIELO[tipo] || '') + ' · ver en directo';
+    chip.hidden = false;
+  }
+
+  // ── «En directo» por ciudad ──
+  var CIUDADES = {
+    vigo: { n: 'Vigo', lat: 42.2406, lon: -8.7207 }, porrino: { n: 'O Porriño', lat: 42.1616, lon: -8.6197 },
+    pontevedra: { n: 'Pontevedra', lat: 42.4310, lon: -8.6444 }, santiago: { n: 'Santiago', lat: 42.8782, lon: -8.5448 },
+    coruna: { n: 'A Coruña', lat: 43.3623, lon: -8.4115 }, ferrol: { n: 'Ferrol', lat: 43.4832, lon: -8.2369 },
+    lugo: { n: 'Lugo', lat: 43.0097, lon: -7.5560 }, ourense: { n: 'Ourense', lat: 42.3358, lon: -7.8639 }
+  };
+  var CLAVE_CIUDAD = 'nexo_ciudad';
+  var ciudad = 'vigo';
+  try { var guardada = localStorage.getItem(CLAVE_CIUDAD); if (CIUDADES[guardada]) ciudad = guardada; } catch (e) {}
+  var selCiudad = document.getElementById('selCiudad');
+  var notaUbic = document.getElementById('notaUbic');
+  selCiudad.value = ciudad;
+
+  function urlAhora(c) { return CONTACTO_URL + '?accion=ahora&ciudad=' + c; }
+
   var COLORES = ['#2FB36B', '#8ED16F', '#FFC72C', '#FF8A3D', '#E5484D', 'rgba(255,255,255,.14)'];
   var VEL_FLUJO = [1.1, 1.6, 2.6, 4.5, 7, 0];
-  function pintarMapa(v) {
-    var svg = document.getElementById('mapaVigo');
-    if (!v || !v.tramos || !v.tramos.length) return;
+  var svgMapa = document.getElementById('mapaVigo');
+
+  // Vigo: las calles del Concello coloreadas por estado del tráfico
+  function pintarMapaVigo(v) {
     var k = Math.cos(42.23 * Math.PI / 180), minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
     v.tramos.forEach(function (t) { for (var i = 0; i < t[3].length; i += 2) {
       var x = t[3][i] * k, y = -t[3][i + 1];
       if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; } });
     var W = 600, esc_ = (W - 20) / (maxX - minX), H = Math.round((maxY - minY) * esc_ + 20);
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svgMapa.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svgMapa.setAttribute('aria-label', 'Mapa del tráfico de Vigo en tiempo real');
     var orden = v.tramos.slice().sort(function (a, b) { return (a[0] === 5 ? -1 : a[0]) - (b[0] === 5 ? -1 : b[0]); });
     var html = '';
     orden.forEach(function (t) {
@@ -204,14 +225,44 @@
       html += '<path class="tramo' + (e === 3 || e === 4 ? ' tramo-lento' : '') + '" d="' + d + '" stroke="' + COLORES[e] + '" stroke-width="' + ancho + '">' + tit + '</path>';
       if (e < 5) html += '<path class="tramo-flujo" d="' + d + '" style="animation-duration:' + VEL_FLUJO[e] + 's" aria-hidden="true"/>';
     });
-    svg.innerHTML = html;
+    svgMapa.innerHTML = html;
   }
+
+  // Otras ciudades: Galicia con la ciudad y las incidencias DGT cercanas
+  function pintarMapaGalicia(a) {
+    var G = window.NEXO_GALICIA;
+    if (!G) { svgMapa.innerHTML = ''; return; }
+    var P = function (lat, lon) { return [G.pad + (lon - G.minx) * G.c * G.k, G.pad + (G.maxy - lat) * G.k]; };
+    var c = CIUDADES[a.ciudad] || CIUDADES.vigo, pc = P(c.lat, c.lon), r30 = 30 / 111 * G.k;
+    svgMapa.setAttribute('viewBox', '0 0 ' + G.w + ' ' + G.h);
+    svgMapa.setAttribute('aria-label', 'Mapa de Galicia con ' + c.n + ' y las incidencias de tráfico cercanas');
+    var html = G.prov.map(function (d) { return '<path d="' + d + '" fill="#123468" stroke="rgba(255,255,255,.3)" stroke-width="1" stroke-linejoin="round"/>'; }).join('');
+    html += '<circle cx="' + pc[0].toFixed(1) + '" cy="' + pc[1].toFixed(1) + '" r="' + r30.toFixed(1) + '" fill="rgba(255,199,44,.08)" stroke="rgba(255,199,44,.5)" stroke-dasharray="4 5"/>';
+    ((a.dgt && a.dgt.cerca) || []).forEach(function (x) {
+      if (x.lat == null) return;
+      var p = P(x.lat, x.lon);
+      html += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="5" fill="' + (x.grave ? '#E5484D' : '#FFC72C') + '" stroke="#061631" stroke-width="1.5"><title>' +
+        esc((x.via || '') + ' · ' + x.texto + ' · ' + x.concello) + '</title></circle>';
+    });
+    html += '<circle class="pulso" cx="' + pc[0].toFixed(1) + '" cy="' + pc[1].toFixed(1) + '" r="9" fill="#FFFFFF" opacity=".5"/>' +
+      '<circle cx="' + pc[0].toFixed(1) + '" cy="' + pc[1].toFixed(1) + '" r="6.5" fill="#FFFFFF" stroke="#061631" stroke-width="2.5"/>' +
+      '<text x="' + (pc[0] + 12).toFixed(1) + '" y="' + (pc[1] - 10).toFixed(1) + '" fill="#FFFFFF" font-family="Big Shoulders Display" font-size="22" font-weight="800">' + esc(c.n.toUpperCase()) + '</text>';
+    svgMapa.innerHTML = html;
+  }
+
   function pintarDirecto(a) {
     var sec = document.getElementById('directo');
-    if (!a || !a.ok) { sec.classList.add('sin-datos'); document.getElementById('vigoAct').textContent = 'Datos no disponibles ahora mismo.'; return; }
-    var v = a.vigo;
-    if (v && v.km) {
-      pintarMapa(v);
+    var nombre = (a && a.nombre) || CIUDADES[ciudad].n;
+    document.getElementById('dirCiudad').textContent = nombre;
+    document.querySelectorAll('.dir-ciudad').forEach(function (el) { el.textContent = nombre; });
+    ['tarjRed', 'tarjLentos', 'tarjTiempo', 'tarjDgt'].forEach(function (id) { document.getElementById(id).hidden = false; });
+    sec.classList.toggle('sin-datos', !a || !a.ok);
+    if (!a || !a.ok) { document.getElementById('vigoAct').textContent = 'Datos no disponibles ahora mismo.'; return; }
+    var v = a.vigo, conTrafico = !!(v && v.tramos && v.tramos.length);
+    document.getElementById('leyendaVigo').hidden = !conTrafico;
+    document.getElementById('leyendaDgt').hidden = conTrafico;
+    if (conTrafico) {
+      pintarMapaVigo(v);
       var medidos = v.km[0] + v.km[1] + v.km[2] + v.km[3] + v.km[4];
       var pct = medidos ? Math.round((v.km[0] + v.km[1]) / medidos * 100) : 0;
       document.getElementById('pctFluido').textContent = pct + ' %';
@@ -220,7 +271,12 @@
       document.getElementById('vigoAct').textContent = v.actualizado ? 'Concello de Vigo · ' + v.actualizado.slice(0, 16) : '';
       document.getElementById('listaLentos').innerHTML = (v.lentos || []).slice(0, 4).map(function (l) {
         return '<li><span>' + esc(l.tramo) + '</span><small>' + esc(l.tiempo.replace(' seg.', ' s').replace(' min.', ' min')) + '</small></li>'; }).join('');
-    } else { document.getElementById('tarjRed').hidden = true; document.getElementById('tarjLentos').hidden = true; }
+    } else {
+      pintarMapaGalicia(a);
+      document.getElementById('tarjRed').hidden = true;
+      document.getElementById('tarjLentos').hidden = true;
+      document.getElementById('vigoAct').textContent = 'Incidencias DGT a 30 km. El tráfico calle a calle solo lo publica el Concello de Vigo.';
+    }
     var t = a.tiempo;
     if (t && t.temp != null) {
       var noche = esDeNoche(), tipo = t.lluvia10min > 0 ? 'lluvia' : tipoCielo(t.ceo);
@@ -239,17 +295,51 @@
           esc(x.concello) + (x.pk !== '' && !isNaN(x.pk) ? ' · km ' + Number(x.pk).toLocaleString('es-ES', { maximumFractionDigits: 1 }) : '') + '</span></li>'; }).join('');
       document.getElementById('listaIncid').innerHTML = lis || '<li class="vacio">Sin incidencias en las carreteras cercanas ahora mismo.</li>';
       document.getElementById('notaDgt').textContent = g.galicia + ' incidencias activas en toda Galicia según la DGT' +
-        (g.totalCerca > (g.cerca || []).length ? ' · se muestran las ' + g.cerca.length + ' más relevantes de ' + g.totalCerca + ' cercanas.' : '.');
+        (g.totalCerca > (g.cerca || []).length ? ' · se muestran las ' + g.cerca.length + ' más relevantes de ' + g.totalCerca + ' a menos de 30 km.' : '.');
     } else document.getElementById('tarjDgt').hidden = true;
   }
 
+  function pedir(c) {
+    return fetch(urlAhora(c)).then(function (r) { return r.json(); });
+  }
+  // La portada usa siempre Vigo; «En directo» y la cabecera, la ciudad elegida
   function cargarAhora() {
     if (!CONTACTO_URL || !window.fetch) { pintarDirecto(null); return; }
-    fetch(CONTACTO_URL + '?accion=ahora')
-      .then(function (r) { return r.json(); })
-      .then(function (a) { aplicarCielo(a.tiempo); pintarDirecto(a); })
+    var pVigo = pedir('vigo');
+    pVigo.then(function (a) { aplicarCielo(a.tiempo); }).catch(function () {});
+    (ciudad === 'vigo' ? pVigo : pedir(ciudad))
+      .then(function (a) { pintarDirecto(a); ponerChip(a); })
       .catch(function () { pintarDirecto(null); });
   }
+  function cambiarCiudad(c, aviso) {
+    if (!CIUDADES[c]) c = 'vigo';
+    ciudad = c; selCiudad.value = c;
+    try { localStorage.setItem(CLAVE_CIUDAD, c); } catch (e) {}
+    notaUbic.textContent = aviso || '';
+    document.getElementById('vigoAct').textContent = 'Cargando datos…';
+    if (!CONTACTO_URL || !window.fetch) return;
+    pedir(c).then(function (a) { pintarDirecto(a); ponerChip(a); }).catch(function () { pintarDirecto(null); });
+  }
+  selCiudad.addEventListener('change', function () { cambiarCiudad(selCiudad.value); });
+
+  // «Usar mi ubicación»: solo al pulsar; la posición se usa en el móvil y no se envía a ningún sitio
+  var btnUbic = document.getElementById('btnUbic');
+  if (!navigator.geolocation) btnUbic.hidden = true;
+  btnUbic.addEventListener('click', function () {
+    notaUbic.textContent = 'Buscando tu ubicación…';
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var la = pos.coords.latitude, lo = pos.coords.longitude, mejor = 'vigo', dmin = 1e9;
+      Object.keys(CIUDADES).forEach(function (k) {
+        var d = Math.sqrt(Math.pow((CIUDADES[k].lat - la) * 111, 2) + Math.pow((CIUDADES[k].lon - lo) * 82, 2));
+        if (d < dmin) { dmin = d; mejor = k; }
+      });
+      if (dmin > 60) cambiarCiudad('vigo', 'Estás fuera de Galicia: mostramos Vigo.');
+      else cambiarCiudad(mejor, 'Ciudad más cercana a ti: ' + CIUDADES[mejor].n + '. Tu ubicación no sale de tu dispositivo.');
+    }, function () {
+      notaUbic.textContent = 'No se pudo obtener tu ubicación. Elige la ciudad en la lista.';
+    }, { maximumAge: 600000, timeout: 10000 });
+  });
+
   cargarAhora();
   setInterval(cargarAhora, 10 * 60 * 1000);
 

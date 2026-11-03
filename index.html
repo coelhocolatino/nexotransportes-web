@@ -22,11 +22,11 @@
 <header class="cab" id="cab">
   <a class="cab-logo" href="#inicio" aria-label="NEXO Transportes, inicio"><img src="img/logo-nexo-blanco.png" alt="NEXO" width="480" height="194"></a>
   <nav aria-label="Principal">
-    <a href="#directo">En directo</a>
     <a href="#servicios">Servicios</a>
     <a href="#tecnologia">Tecnología</a>
     <a href="#cobertura">Cobertura</a>
     <a href="#empresa">Empresa</a>
+    <a href="#directo">En directo</a>
     <a href="#contacto">Contacto</a>
   </nav>
   <a class="ahora-chip" id="ahoraChip" href="#directo" hidden></a>
@@ -107,51 +107,6 @@
   </div>
 </section>
 
-<!-- ══ VIGO EN DIRECTO: tráfico (Concello de Vigo), tiempo (MeteoGalicia) e incidencias (DGT) ══ -->
-<section class="seccion directo" id="directo" aria-labelledby="directoTit">
-  <div class="cabeza sube">
-    <div>
-      <span class="etiqueta"><i class="punto-vivo" aria-hidden="true"></i>En directo</span>
-      <h2 id="directoTit">Vigo, <em>ahora</em></h2>
-    </div>
-    <p>El tráfico de la ciudad, el tiempo y las incidencias en las carreteras cercanas, actualizados cada pocos minutos.</p>
-  </div>
-  <div class="directo-grid">
-    <figure class="mapa-vigo sube">
-      <svg id="mapaVigo" role="img" aria-label="Mapa del tráfico de Vigo en tiempo real"></svg>
-      <figcaption>
-        <ul class="leyenda" aria-label="Leyenda">
-          <li><i style="background:#2FB36B"></i>Muy fluido</li><li><i style="background:#8ED16F"></i>Fluido</li>
-          <li><i style="background:#FFC72C"></i>Normal</li><li><i style="background:#FF8A3D"></i>Lento</li><li><i style="background:#E5484D"></i>Muy lento</li>
-        </ul>
-        <span id="vigoAct">Cargando datos…</span>
-      </figcaption>
-    </figure>
-    <div class="directo-col">
-      <article class="tarjeta-d sube" id="tarjRed">
-        <h3>Red urbana</h3>
-        <p class="cifra"><b id="pctFluido">—</b><span>de las calles medidas,<br>con tráfico fluido</span></p>
-        <div class="barra-estados" id="barraEstados" aria-hidden="true"></div>
-      </article>
-      <article class="tarjeta-d sube" id="tarjLentos">
-        <h3>Más lento ahora</h3>
-        <ol class="lentos" id="listaLentos"></ol>
-      </article>
-      <article class="tarjeta-d sube" id="tarjTiempo">
-        <h3>Tiempo en Vigo</h3>
-        <div class="tiempo-ahora" id="tiempoAhora"></div>
-        <ul class="franjas" id="franjas"></ul>
-      </article>
-    </div>
-  </div>
-  <article class="tarjeta-d incid sube" id="tarjDgt">
-    <h3>Carreteras cerca de Vigo y O Porriño</h3>
-    <ul class="incidencias" id="listaIncid"></ul>
-    <p class="nota-d" id="notaDgt"></p>
-  </article>
-  <p class="fuentes-d">Datos abiertos: <a href="https://datos.vigo.org" rel="noopener">Concello de Vigo</a> (tráfico urbano) · <a href="https://www.meteogalicia.gal" rel="noopener">MeteoGalicia</a> (tiempo) · <a href="https://nap.dgt.es" rel="noopener">DGT</a> (incidencias). Información orientativa.</p>
-</section>
-
 <!-- ══ SERVICIOS ══ -->
 <section class="seccion clara" id="servicios">
   <div class="cabeza sube">
@@ -159,7 +114,7 @@
       <span class="etiqueta">Servicios</span>
       <h2>Lo que <em>movemos</em> cada día</h2>
     </div>
-    <p>Trabajamos para supermercados y redes de paquetería que necesitan un socio local, puntual y con todo bajo control. <span class="valida">Validar textos</span></p>
+    <p>Trabajamos para supermercados y redes de paquetería que necesitan un socio local, puntual y con todo bajo control. Cuenta con nosotros como parte de tu empresa para encantar a tus clientes.</p>
   </div>
   <div class="servicios">
     <article class="serv destacado sube">
@@ -284,9 +239,67 @@
   <img src="img/esc-rande1.jpg" alt="Puente de Rande sobre la ría de Vigo" loading="lazy">
   <div class="dentro sube">
     <span class="etiqueta">Empresa</span>
-    <h2>Personas que <em>conocen</em> su tierra</h2>
-    <p>Detrás de cada entrega hay un equipo gallego, con bases en Vigo y O Porriño, que cuida el pedido como si fuera suyo. <span class="valida">Pendiente: historia, equipo y fotos propias</span></p>
+    <h2>De muchos lugares, <em>un mismo hogar</em></h2>
+    <p>Somos personas de varias nacionalidades que nos enamoramos de Galicia y decidimos hacer de ella nuestro hogar. Desde nuestras bases en Vigo y O Porriño trabajamos comprometidos en contribuir positivamente a la sociedad, entrega a entrega.</p>
   </div>
+</section>
+
+<!-- ══ EN DIRECTO por ciudad: tiempo (MeteoGalicia), incidencias (DGT) y, en Vigo, tráfico urbano (Concello) ══ -->
+<section class="seccion directo" id="directo" aria-labelledby="directoTit">
+  <div class="cabeza sube">
+    <div>
+      <span class="etiqueta"><i class="punto-vivo" aria-hidden="true"></i>En directo</span>
+      <h2 id="directoTit"><span id="dirCiudad">Vigo</span>, <em>ahora</em></h2>
+    </div>
+    <div>
+      <p>El tiempo, el tráfico y las incidencias en las carreteras cercanas, actualizados cada pocos minutos.</p>
+      <div class="ciudad-ctl">
+        <label for="selCiudad">Ciudad</label>
+        <select id="selCiudad">
+          <option value="vigo">Vigo</option><option value="porrino">O Porriño</option><option value="pontevedra">Pontevedra</option>
+          <option value="santiago">Santiago</option><option value="coruna">A Coruña</option><option value="ferrol">Ferrol</option>
+          <option value="lugo">Lugo</option><option value="ourense">Ourense</option>
+        </select>
+        <button type="button" class="btn-ubic" id="btnUbic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Usar mi ubicación</button>
+      </div>
+      <p class="nota-ubic" id="notaUbic" role="status"></p>
+    </div>
+  </div>
+  <div class="directo-grid">
+    <figure class="mapa-vigo sube">
+      <svg id="mapaVigo" role="img" aria-label="Mapa del tráfico de Vigo en tiempo real"></svg>
+      <figcaption>
+        <ul class="leyenda" id="leyendaVigo" aria-label="Leyenda">
+          <li><i style="background:#2FB36B"></i>Muy fluido</li><li><i style="background:#8ED16F"></i>Fluido</li>
+          <li><i style="background:#FFC72C"></i>Normal</li><li><i style="background:#FF8A3D"></i>Lento</li><li><i style="background:#E5484D"></i>Muy lento</li>
+        </ul>
+        <ul class="leyenda" id="leyendaDgt" aria-label="Leyenda" hidden><li><i style="background:#E5484D"></i>Corte o accidente</li><li><i style="background:#FFC72C"></i>Obras y otras incidencias</li></ul>
+        <span id="vigoAct">Cargando datos…</span>
+      </figcaption>
+    </figure>
+    <div class="directo-col">
+      <article class="tarjeta-d sube" id="tarjRed">
+        <h3>Red urbana</h3>
+        <p class="cifra"><b id="pctFluido">—</b><span>de las calles medidas,<br>con tráfico fluido</span></p>
+        <div class="barra-estados" id="barraEstados" aria-hidden="true"></div>
+      </article>
+      <article class="tarjeta-d sube" id="tarjLentos">
+        <h3>Más lento ahora</h3>
+        <ol class="lentos" id="listaLentos"></ol>
+      </article>
+      <article class="tarjeta-d sube" id="tarjTiempo">
+        <h3>Tiempo en <span class="dir-ciudad">Vigo</span></h3>
+        <div class="tiempo-ahora" id="tiempoAhora"></div>
+        <ul class="franjas" id="franjas"></ul>
+      </article>
+    </div>
+  </div>
+  <article class="tarjeta-d incid sube" id="tarjDgt">
+    <h3>Carreteras cerca de <span class="dir-ciudad">Vigo</span></h3>
+    <ul class="incidencias" id="listaIncid"></ul>
+    <p class="nota-d" id="notaDgt"></p>
+  </article>
+  <p class="fuentes-d">Datos abiertos: <a href="https://datos.vigo.org" rel="noopener">Concello de Vigo</a> (tráfico urbano) · <a href="https://www.meteogalicia.gal" rel="noopener">MeteoGalicia</a> (tiempo) · <a href="https://nap.dgt.es" rel="noopener">DGT</a> (incidencias). Información orientativa.</p>
 </section>
 
 <!-- ══ CONTACTO ══ -->
@@ -356,6 +369,7 @@
 { "imports": { "three": "./vendor/three/three.module.min.js",
                "three/addons/environments/RoomEnvironment.js": "./vendor/three/RoomEnvironment.js" } }
 </script>
+<script src="galicia-mapa.js"></script>
 <script src="site.js"></script>
 <script type="module" src="furgoneta3d.js"></script>
 </body>

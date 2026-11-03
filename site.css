@@ -326,12 +326,24 @@ a { color:inherit; }
 .punto-vivo { width:9px; height:9px; border-radius:50%; background:#E5484D; display:inline-block; animation:latido 1.6s ease-in-out infinite; }
 .directo .etiqueta::before { display:none; }
 @keyframes latido { 50% { opacity:.25; } }
+.ciudad-ctl { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:18px; }
+.ciudad-ctl label { font:800 12px var(--texto); letter-spacing:.14em; text-transform:uppercase; color:var(--amarillo); }
+.ciudad-ctl select { min-height:46px; padding:0 40px 0 14px; border-radius:12px; border:1.5px solid rgba(255,255,255,.25); background:#0E2C5A; color:var(--blanco);
+  font:700 16px var(--texto); -webkit-appearance:none; appearance:none; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FFC72C' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; }
+.btn-ubic { display:inline-flex; align-items:center; gap:8px; min-height:46px; padding:0 16px; border-radius:12px; border:0; cursor:pointer;
+  background:var(--amarillo); color:var(--azul-noche); font:800 15px var(--texto); }
+.btn-ubic svg { width:18px; height:18px; }
+.btn-ubic[hidden] { display:none; }
+.nota-ubic { margin:10px 0 0; min-height:1.2em; font-size:13px; font-weight:700; color:rgba(255,255,255,.7); }
 .directo-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:18px; align-items:stretch; }
 .mapa-vigo { margin:0; background:#0A1F42; border-radius:28px; padding:18px; display:flex; flex-direction:column; gap:12px; min-height:420px; }
 .mapa-vigo svg { width:100%; flex:1; min-height:340px; display:block; }
 .mapa-vigo figcaption { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; justify-content:space-between; font-size:13px; font-weight:700; color:rgba(255,255,255,.7); }
 .leyenda { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:6px 14px; }
 .leyenda li { display:flex; align-items:center; gap:6px; }
+.leyenda[hidden], .tarjeta-d[hidden] { display:none; }
 .leyenda i { width:18px; height:4px; border-radius:2px; }
 .tramo { fill:none; stroke-linecap:round; stroke-linejoin:round; }
 .tramo-flujo { fill:none; stroke-linecap:round; stroke:rgba(255,255,255,.85); stroke-width:1.2; stroke-dasharray:2 14; animation:flujo linear infinite; }
