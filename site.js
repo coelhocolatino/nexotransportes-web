@@ -175,7 +175,8 @@
     window.dispatchEvent(new CustomEvent('nexo:ahora', { detail: window.NEXO_AHORA }));
     if (t && t.temp != null) {
       var chip = document.getElementById('ahoraChip');
-      chip.innerHTML = icono(tipo, noche) + '<b>' + grados(t.temp) + '</b> en Vigo · ' + esc(TXT_CIELO[tipo] || (noche ? 'Noche' : 'Ahora'));
+      chip.innerHTML = icono(tipo, noche) + '<b>' + grados(t.temp) + '</b><span class="chip-txt">Vigo · ' + esc(TXT_CIELO[tipo] || (noche ? 'Noche' : 'Ahora')) + '</span>';
+      chip.title = grados(t.temp) + ' en Vigo · ' + (TXT_CIELO[tipo] || '') + ' · ver Vigo en directo';
       chip.hidden = false;
     }
   }

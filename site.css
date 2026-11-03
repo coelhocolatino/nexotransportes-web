@@ -256,7 +256,10 @@ a { color:inherit; }
 
 /* ---------- Móvil ---------- */
 @media (max-width:900px) {
-  .titulos { width:auto; right:16px; top:calc(var(--cab) + 3vh); }
+  .titulos { width:auto; right:16px; top:calc(var(--cab) + 3vh); bottom:0; }
+  .escena-txt { bottom:0; }
+  /* El botón baja hasta encima del panel de acceso para no tapar la furgoneta */
+  .escena-txt .ctas { position:absolute; left:0; bottom:196px; margin:0; }
   .titular { font-size:clamp(46px,14vw,72px); }
   .bajada { font-size:15px; margin-top:14px; }
   .ctas { margin-top:18px; } .ctas .btn { min-height:50px; padding:0 18px; font-size:15px; }
@@ -292,12 +295,14 @@ a { color:inherit; }
 }
 
 /* ---------- Tiempo real en la portada ---------- */
-.ahora-chip { display:inline-flex; align-items:center; gap:8px; margin:0 0 0 14px; vertical-align:middle; padding:6px 14px 6px 8px; border-radius:99px;
+.ahora-chip { display:inline-flex; align-items:center; gap:8px; margin:0 -14px 0 0; min-height:40px; padding:6px 14px 6px 8px; border-radius:99px;
   background:rgba(255,255,255,.1); box-shadow:inset 0 0 0 1px rgba(255,255,255,.22); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   font:700 14px var(--texto); color:var(--blanco); text-decoration:none; }
 .ahora-chip[hidden] { display:none; }
 .ahora-chip svg { width:22px; height:22px; color:var(--amarillo); flex:none; }
 .ahora-chip b { font:800 18px/1 var(--display); }
+.cab nav + .ahora-chip { margin-left:0; }
+.ahora-chip .chip-txt { font-size:13px; opacity:.85; }
 .escenario.cielo-gris .fondos figure:first-child img { filter:saturate(.45) brightness(.82) contrast(.95); }
 .clima { position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity 1.2s; }
 .escenario.e0.lluvia .clima, .escenario.e0.niebla .clima { opacity:1; }
@@ -371,7 +376,10 @@ a { color:inherit; }
   .mapa-vigo { min-height:0; padding:12px; border-radius:22px; }
   .mapa-vigo svg { min-height:300px; }
   .incidencias { grid-template-columns:1fr; }
-  .ahora-chip { display:flex; width:max-content; margin:12px 0 0; }
+  .ahora-chip { margin:0 0 0 auto; padding:4px 10px 4px 6px; min-height:36px; }
+  .ahora-chip .chip-txt { display:none; }
+  .ahora-chip:not([hidden]) + .btn-area { margin-left:0; }
+  .cab { gap:10px; }
   .cifra b { font-size:54px; }
 }
 
