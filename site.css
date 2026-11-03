@@ -291,6 +291,90 @@ a { color:inherit; }
   html { scroll-behavior:auto; }
 }
 
+/* ---------- Tiempo real en la portada ---------- */
+.ahora-chip { display:inline-flex; align-items:center; gap:8px; margin:0 0 0 14px; vertical-align:middle; padding:6px 14px 6px 8px; border-radius:99px;
+  background:rgba(255,255,255,.1); box-shadow:inset 0 0 0 1px rgba(255,255,255,.22); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  font:700 14px var(--texto); color:var(--blanco); text-decoration:none; }
+.ahora-chip[hidden] { display:none; }
+.ahora-chip svg { width:22px; height:22px; color:var(--amarillo); flex:none; }
+.ahora-chip b { font:800 18px/1 var(--display); }
+.escenario.cielo-gris .fondos figure:first-child img { filter:saturate(.45) brightness(.82) contrast(.95); }
+.clima { position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity 1.2s; }
+.escenario.e0.lluvia .clima, .escenario.e0.niebla .clima { opacity:1; }
+.escenario.lluvia .clima { background-image:
+    repeating-linear-gradient(104deg, transparent 0 18px, rgba(220,232,255,.22) 18px 19px, transparent 19px 46px),
+    repeating-linear-gradient(100deg, transparent 0 31px, rgba(220,232,255,.14) 31px 32px, transparent 32px 70px);
+  background-size:300px 300px, 420px 420px; animation:lluvia .55s linear infinite; }
+@keyframes lluvia { to { background-position:-60px 300px, -80px 420px; } }
+.escenario.niebla .clima { background:
+    radial-gradient(60% 30% at 20% 70%, rgba(230,236,244,.55), transparent 70%),
+    radial-gradient(50% 25% at 75% 60%, rgba(230,236,244,.45), transparent 70%),
+    linear-gradient(0deg, rgba(220,228,238,.35), transparent 60%);
+  background-size:200% 100%; animation:niebla 18s ease-in-out infinite alternate; }
+@keyframes niebla { to { background-position:-40% 0; } }
+
+/* ---------- Vigo en directo ---------- */
+.directo { background:var(--azul-noche); }
+.directo .cabeza h2 em { color:var(--amarillo); font-style:normal; }
+.directo .cabeza h2 { margin:12px 0 0; font-family:var(--display); font-weight:800; text-transform:uppercase; line-height:.9; font-size:clamp(44px,5.6vw,88px); }
+.directo .cabeza p { color:rgba(255,255,255,.75); }
+.punto-vivo { width:9px; height:9px; border-radius:50%; background:#E5484D; display:inline-block; animation:latido 1.6s ease-in-out infinite; }
+.directo .etiqueta::before { display:none; }
+@keyframes latido { 50% { opacity:.25; } }
+.directo-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:18px; align-items:stretch; }
+.mapa-vigo { margin:0; background:#0A1F42; border-radius:28px; padding:18px; display:flex; flex-direction:column; gap:12px; min-height:420px; }
+.mapa-vigo svg { width:100%; flex:1; min-height:340px; display:block; }
+.mapa-vigo figcaption { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; justify-content:space-between; font-size:13px; font-weight:700; color:rgba(255,255,255,.7); }
+.leyenda { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:6px 14px; }
+.leyenda li { display:flex; align-items:center; gap:6px; }
+.leyenda i { width:18px; height:4px; border-radius:2px; }
+.tramo { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.tramo-flujo { fill:none; stroke-linecap:round; stroke:rgba(255,255,255,.85); stroke-width:1.2; stroke-dasharray:2 14; animation:flujo linear infinite; }
+@keyframes flujo { to { stroke-dashoffset:-32; } }
+.tramo-lento { animation:pulsoTramo 1.8s ease-in-out infinite; }
+@keyframes pulsoTramo { 50% { stroke-opacity:.45; } }
+.directo-col { display:flex; flex-direction:column; gap:18px; }
+.tarjeta-d { background:#0E2C5A; border-radius:24px; padding:22px; }
+.tarjeta-d h3 { margin:0 0 14px; font:800 13px var(--texto); letter-spacing:.16em; text-transform:uppercase; color:var(--amarillo); }
+.cifra { display:flex; align-items:flex-end; gap:14px; margin:0 0 16px; }
+.cifra b { font:800 64px/.85 var(--display); }
+.cifra span { font-size:14px; line-height:1.35; color:rgba(255,255,255,.75); }
+.barra-estados { display:flex; height:12px; border-radius:6px; overflow:hidden; background:rgba(255,255,255,.08); }
+.barra-estados i { display:block; height:100%; transition:width .8s; }
+.lentos { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; counter-reset:l; }
+.lentos li { display:grid; grid-template-columns:22px 1fr auto; gap:10px; align-items:baseline; font-size:15px; line-height:1.35; }
+.lentos li::before { counter-increment:l; content:counter(l); font:800 18px/1 var(--display); color:var(--amarillo); }
+.lentos small { font-weight:800; color:#FF8A3D; white-space:nowrap; }
+.tiempo-ahora { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.tiempo-ahora svg { width:52px; height:52px; color:var(--amarillo); flex:none; }
+.tiempo-ahora b { font:800 54px/.9 var(--display); }
+.tiempo-ahora span { display:block; margin-top:4px; font-size:15px; line-height:1.35; color:rgba(255,255,255,.8); }
+.franjas { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.franjas li { background:rgba(255,255,255,.06); border-radius:14px; padding:10px; text-align:center; font-size:12px; font-weight:700; color:rgba(255,255,255,.7); }
+.franjas li.actual { box-shadow:inset 0 0 0 1.5px var(--amarillo); }
+.franjas svg { width:26px; height:26px; color:var(--amarillo); display:block; margin:4px auto; }
+.franjas b { display:block; font:800 22px/1 var(--display); color:var(--blanco); }
+.incid { margin-top:18px; }
+.incidencias { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 24px; }
+.incidencias li { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; padding:12px 0; border-top:1px solid rgba(255,255,255,.1); }
+.incidencias .via { grid-row:span 2; align-self:center; font:800 15px var(--texto); background:var(--blanco); color:var(--azul-noche); border-radius:8px; padding:6px 8px; min-width:62px; text-align:center; }
+.incidencias .via.grave { background:#E5484D; color:var(--blanco); }
+.incidencias strong { font-size:15px; }
+.incidencias span { font-size:13px; color:rgba(255,255,255,.65); }
+.incidencias .vacio { display:block; grid-column:1/-1; border:0; color:rgba(255,255,255,.75); }
+.nota-d { margin:12px 0 0; font-size:13px; color:rgba(255,255,255,.6); }
+.fuentes-d { margin:22px 0 0; font-size:12px; color:rgba(255,255,255,.5); line-height:1.6; }
+.fuentes-d a { color:inherit; }
+.directo.sin-datos .directo-grid, .directo.sin-datos .incid { opacity:.5; }
+@media (max-width:900px) {
+  .directo-grid { grid-template-columns:1fr; }
+  .mapa-vigo { min-height:0; padding:12px; border-radius:22px; }
+  .mapa-vigo svg { min-height:300px; }
+  .incidencias { grid-template-columns:1fr; }
+  .ahora-chip { display:flex; width:max-content; margin:12px 0 0; }
+  .cifra b { font-size:54px; }
+}
+
 /* ---------- Páginas legales ---------- */
 .pag-legal { background:var(--gris-0); color:var(--azul); }
 .pag-legal .cab { position:sticky; }

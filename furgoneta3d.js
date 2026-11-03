@@ -25,7 +25,8 @@ function arrancar() {
   const camara = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
   camara.position.set(0, 3.4, 15);
 
-  escena.add(new THREE.HemisphereLight(0xdfe9ff, 0x0b2447, 0.6));
+  const cielo = new THREE.HemisphereLight(0xdfe9ff, 0x0b2447, 0.6);
+  escena.add(cielo);
   const sol = new THREE.DirectionalLight(0xffffff, 2.2);
   sol.position.set(5, 9, 6);
   sol.castShadow = true;
@@ -134,6 +135,18 @@ function arrancar() {
   caja(0.06, 0.7, 0.14, piloto, -2.79, 1.55, -0.94);
   caja(0.02, 2.0, 0.02, negro, -2.785, 1.48, 0);                 // junta de puertas traseras
   caja(0.04, 0.1, 0.34, new THREE.MeshStandardMaterial({ color: 0xffc72c, emissive: 0xffc72c, emissiveIntensity: 0.6 }), 0.2, 2.7, 0); // rotativo
+
+  // Luz según la hora real (site.js avisa con «nexo:ahora»)
+  function luzSegunHora(a) {
+    const noche = !!(a && a.noche);
+    sol.intensity = noche ? 0.9 : 2.6;
+    cielo.intensity = noche ? 0.35 : 0.8;
+    contra.intensity = noche ? 1.3 : 0.7;
+    faro.emissiveIntensity = noche ? 4 : 1.6;
+    renderer.toneMappingExposure = noche ? 0.95 : 1.1;
+  }
+  luzSegunHora(window.NEXO_AHORA);
+  addEventListener('nexo:ahora', e => luzSegunHora(e.detail));
 
   // ── Ruedas ──
   const goma = new THREE.MeshStandardMaterial({ color: 0x16181d, roughness: 0.9 });

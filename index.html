@@ -22,6 +22,7 @@
 <header class="cab" id="cab">
   <a class="cab-logo" href="#inicio" aria-label="NEXO Transportes, inicio"><img src="img/logo-nexo-blanco.png" alt="NEXO" width="480" height="194"></a>
   <nav aria-label="Principal">
+    <a href="#directo">En directo</a>
     <a href="#servicios">Servicios</a>
     <a href="#tecnologia">Tecnología</a>
     <a href="#cobertura">Cobertura</a>
@@ -39,18 +40,20 @@
 <section class="viaje" id="inicio" aria-label="Presentación">
   <div class="escenario">
     <div class="fondos" aria-hidden="true">
-      <figure class="activa"><picture><source media="(max-width:900px)" srcset="img/esc-limens-m.jpg"><img src="img/esc-limens.jpg" alt=""></picture></figure>
+      <figure class="activa" id="fondoInicio"><picture><source media="(max-width:900px)" srcset="img/esc-limens-m.jpg"><img src="img/esc-limens.jpg" alt=""></picture></figure>
       <figure><picture><source media="(max-width:900px)" srcset="img/esc-rande-txo-m.jpg"><img src="img/esc-rande-txo.jpg" alt=""></picture></figure>
       <figure><picture><source media="(max-width:900px)" srcset="img/esc-vigo-pano-m.jpg"><img src="img/esc-vigo-pano.jpg" alt=""></picture></figure>
       <figure><picture><source media="(max-width:900px)" srcset="img/esc-vigo-alba-m.jpg"><img src="img/esc-vigo-alba.jpg" alt=""></picture></figure>
       <figure><picture><source media="(max-width:900px)" srcset="img/esc-cies-m.jpg"><img src="img/esc-cies.jpg" alt=""></picture></figure>
     </div>
 
+    <div class="clima" id="clima" aria-hidden="true"></div>
     <canvas id="lienzo3d" aria-hidden="true"></canvas>
 
     <div class="titulos">
       <div class="escena-txt activa">
         <span class="etiqueta">Galicia · Vigo · O Porriño</span>
+        <a class="ahora-chip" id="ahoraChip" href="#directo" hidden></a>
         <h1 class="titular"><span class="l"><span>Cada entrega,</span></span><br><span class="l"><span>más <em>cerca.</em></span></span></h1>
         <p class="bajada">Reparto a domicilio en toda Galicia, con nuestras bases en Vigo y O Porriño.<span class="solo-ancho"> Conectamos negocios y hogares con un servicio ágil, cercano y fiable.</span></p>
         <div class="ctas">
@@ -102,6 +105,51 @@
     </div>
     <div class="pista-scroll" aria-hidden="true"><span></span>Desliza</div>
   </div>
+</section>
+
+<!-- ══ VIGO EN DIRECTO: tráfico (Concello de Vigo), tiempo (MeteoGalicia) e incidencias (DGT) ══ -->
+<section class="seccion directo" id="directo" aria-labelledby="directoTit">
+  <div class="cabeza sube">
+    <div>
+      <span class="etiqueta"><i class="punto-vivo" aria-hidden="true"></i>En directo</span>
+      <h2 id="directoTit">Vigo, <em>ahora</em></h2>
+    </div>
+    <p>El tráfico de la ciudad, el tiempo y las incidencias en las carreteras cercanas, actualizados cada pocos minutos.</p>
+  </div>
+  <div class="directo-grid">
+    <figure class="mapa-vigo sube">
+      <svg id="mapaVigo" role="img" aria-label="Mapa del tráfico de Vigo en tiempo real"></svg>
+      <figcaption>
+        <ul class="leyenda" aria-label="Leyenda">
+          <li><i style="background:#2FB36B"></i>Muy fluido</li><li><i style="background:#8ED16F"></i>Fluido</li>
+          <li><i style="background:#FFC72C"></i>Normal</li><li><i style="background:#FF8A3D"></i>Lento</li><li><i style="background:#E5484D"></i>Muy lento</li>
+        </ul>
+        <span id="vigoAct">Cargando datos…</span>
+      </figcaption>
+    </figure>
+    <div class="directo-col">
+      <article class="tarjeta-d sube" id="tarjRed">
+        <h3>Red urbana</h3>
+        <p class="cifra"><b id="pctFluido">—</b><span>de las calles medidas,<br>con tráfico fluido</span></p>
+        <div class="barra-estados" id="barraEstados" aria-hidden="true"></div>
+      </article>
+      <article class="tarjeta-d sube" id="tarjLentos">
+        <h3>Más lento ahora</h3>
+        <ol class="lentos" id="listaLentos"></ol>
+      </article>
+      <article class="tarjeta-d sube" id="tarjTiempo">
+        <h3>Tiempo en Vigo</h3>
+        <div class="tiempo-ahora" id="tiempoAhora"></div>
+        <ul class="franjas" id="franjas"></ul>
+      </article>
+    </div>
+  </div>
+  <article class="tarjeta-d incid sube" id="tarjDgt">
+    <h3>Carreteras cerca de Vigo y O Porriño</h3>
+    <ul class="incidencias" id="listaIncid"></ul>
+    <p class="nota-d" id="notaDgt"></p>
+  </article>
+  <p class="fuentes-d">Datos abiertos: <a href="https://datos.vigo.org" rel="noopener">Concello de Vigo</a> (tráfico urbano) · <a href="https://www.meteogalicia.gal" rel="noopener">MeteoGalicia</a> (tiempo) · <a href="https://nap.dgt.es" rel="noopener">DGT</a> (incidencias). Información orientativa.</p>
 </section>
 
 <!-- ══ SERVICIOS ══ -->
@@ -283,7 +331,7 @@
   <div class="pie-legal">
     © 2026 NEXO Transportes · COLATINO REPARTOS Y TRANSPORTE SL · CIF B26828947 · Rúa Coruña, 18, 36400 O Porriño (Pontevedra) · <a href="tel:+34886036743">886 03 67 43</a> · <a href="mailto:nexo@nexotransportes.com">nexo@nexotransportes.com</a><br>
     Logotipos de Carrefour, DIA y GLS: marcas de sus titulares, mostradas como clientes de NEXO.<br>
-    Fotografías: Wikimedia Commons (Harpagornis CC BY-SA 4.0, Txo CC BY-SA 4.0, José Luis Filpo Cabana CC BY 3.0, Lobios123 CC BY-SA 4.0, Luis Cayola CC BY-SA 4.0, Zarateman CC0).
+    Fotografías: Wikimedia Commons (Harpagornis CC BY-SA 4.0, Txo CC BY-SA 4.0, José Luis Filpo Cabana CC BY 3.0, Lobios123 CC BY-SA 4.0, Luis Cayola CC BY-SA 4.0, Zarateman CC0). Datos en directo: Concello de Vigo (ODC-BY), MeteoGalicia (CC BY 4.0), DGT.
   </div>
 </footer>
 
