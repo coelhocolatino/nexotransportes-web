@@ -265,9 +265,13 @@ a { color:inherit; }
   .escenario .acceso-logo { display:none; }
   .escenario .acceso form { flex-direction:row; flex-wrap:wrap; align-items:flex-end; gap:10px; padding-top:14px; }
   .escenario .acceso h2 { font-size:22px; width:100%; }
-  .escenario .acceso .campo { flex:1 1 150px; }
+  .escenario .acceso .campo { flex:1 1 0; min-width:0; }
+  .solo-ancho { display:none; }
   .escenario .acceso form > button { flex:0 0 auto; width:auto; padding:0 18px; min-height:52px; }
-  .escenario .acceso .pista { width:100%; font-size:12px; }
+  .escenario .acceso .pista { display:none; }
+  .escenario .acceso form { flex-wrap:nowrap; padding-top:12px; }
+  .escenario .acceso h2 { display:none; }
+  .escenario .acceso label::before { content:'Acceso NEXO · '; color:#0B2447; font-weight:800; }
   .modal .acceso { width:100%; max-width:380px; }
   .pista-scroll { display:none; }
   .rail { bottom:22px; } .rail li { width:22px; } .rail-nombre { display:none; }
