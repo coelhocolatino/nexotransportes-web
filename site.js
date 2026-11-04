@@ -3,6 +3,10 @@
   'use strict';
   // Acceso real de la app NEXO (GitHub Pages). Cuando exista app.nexotransportes.com, cambiar aquí.
   var APP_LOGIN = 'https://coelhocolatino.github.io/nexo-tickets/login.html';
+  // Dentro de la app (login.html la abre en un marco al arrancar): «Acceso» avisa a la app en vez de navegar.
+  var APP_ORIGEN = 'https://coelhocolatino.github.io';
+  var enApp = window.parent !== window;
+  if (enApp) window.parent.postMessage({ nexo: 'lista' }, APP_ORIGEN);
   // Apps Script «NEXO · Web contacto» (URL /exec de su implementación): formulario (POST) y «Vigo, ahora» (GET ?accion=ahora).
   var CONTACTO_URL = 'https://script.google.com/macros/s/AKfycbwbMdJ6JkmLjaj5DnMmc1U2Ht00fNvFUSbcdaHTNvf6BGt88Lgf39ym-ZK_gmvVl-7c/exec';
   var NOMBRES = ['Noche en la ría', 'Rande', 'Vigo', 'Galicia', 'Tu puerta'];
@@ -59,6 +63,7 @@
     f.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var u = (f.querySelector('input').value || '').trim();
+      if (enApp) { window.parent.postMessage({ nexo: 'acceso', u: u }, APP_ORIGEN); return; }
       window.location.href = APP_LOGIN + (u ? '#u=' + encodeURIComponent(u) : '');
     });
   });
